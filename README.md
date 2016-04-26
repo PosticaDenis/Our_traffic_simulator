@@ -1,0 +1,1 @@
+The repository contains the work of our team on creating a traffic simulator.
