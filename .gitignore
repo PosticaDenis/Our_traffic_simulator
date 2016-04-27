@@ -21,6 +21,8 @@
 *.la
 *.a
 *.lib
+*.depend
+*.layout
 
 # Executables
 *.exe
