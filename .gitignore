@@ -21,6 +21,8 @@
 *.la
 *.a
 *.lib
+
+# CodeBlocks artefacts
 *.depend
 *.layout
 
