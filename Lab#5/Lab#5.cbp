@@ -28,12 +28,10 @@
 			<Add library="kernel32" />
 			<Add library="comctl32" />
 		</Linker>
+		<Unit filename="bitmap.bmp" />
 		<Unit filename="header.h" />
 		<Unit filename="main.cpp" />
-		<Unit filename="res.rc">
-			<Option compilerVar="WINDRES" />
-		</Unit>
-		<Unit filename="traffic.bmp" />
+		<Unit filename="traffic_lights.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

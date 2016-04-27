@@ -5,6 +5,7 @@ LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
 
 char szClassName[ ] = "WindowsApp";
 
+
 int WINAPI WinMain (HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszArgument, int nCmdShow)
 {
     HWND hwnd;
@@ -25,7 +26,6 @@ int WINAPI WinMain (HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpsz
     wincl.cbWndExtra = 0;
 
     wincl.hbrBackground =NULL;
-COLORREF clr;
     if (!RegisterClassEx (&wincl))
         return 0;
 
@@ -45,7 +45,7 @@ COLORREF clr;
            );
 
     ShowWindow (hwnd, nCmdShow);
-
+    //UpdateWindow(hwnd);
     while (GetMessage (&messages, NULL, 0, 0))
     {
         TranslateMessage(&messages);
@@ -57,7 +57,6 @@ COLORREF clr;
 
 LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    int cnt;
     static HDC hdc,hdcMem;
     static PAINTSTRUCT ps;
     static RECT rect;
@@ -66,9 +65,13 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 
     static HANDLE hOld;
 
-    static int timerSpeed = 1,nrObj = 0;
-    static RECT area = {0, 0, 800, 600};
+    static int timerSpeed = 1000;
 
+    POINT coord;
+    static traffic_lights TL[4];
+    double a[4]={40,140,40,140};
+    double b[4]={40,40,140,140};
+    static bool tl[4]={TRUE,FALSE,FALSE,TRUE};
     switch (message)
     {
         case WM_CREATE:
@@ -76,47 +79,13 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
           hdc = GetDC(hwnd);
           GetClientRect(hwnd,&rect);
 
+          for (int i=0;i<4;i++)
+          {
+              coord.x=a[i];
+              coord.y=b[i];
+              TL[i].setTL(coord,tl[i]);
+          }
           SetTimer(hwnd, ID_TIMER, timerSpeed, NULL);
-        break;
-        }
-
-        case WM_SIZE:
-        {
-            hdc = GetDC(hwnd);
-            GetClientRect(hwnd, &rect);
-        break;
-        }
-
-        case WM_LBUTTONDOWN:
-        {
-            POINT coord;
-            coord.x = LOWORD(lParam);
-            coord.y = HIWORD(lParam);
-            cnt=0;
-            if (nrObj>0)
-            {
-                for(int i = 0; i<nrObj; i++)
-                {
-                    if(abs(coord.x-objs[i]->center.x)<52)
-                    {
-                        cnt+=1;
-                    }
-                }
-                if(cnt==0)
-                {
-                    objs[nrObj] = new Circle(coord,2 + coord.x%5);
-                    objs[nrObj] -> Color(RGB(coord.x%200, coord.x%150+coord.y%100, coord.y%200));
-
-                    nrObj++;
-                }
-            }
-            else
-            {
-                objs[nrObj] = new Circle(coord,2 + coord.x%5);
-                objs[nrObj] -> Color(RGB(coord.x%200, coord.x%150+coord.y%100, coord.y%200));
-
-                nrObj++;
-            }
         break;
         }
 
@@ -124,11 +93,11 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
         {
             if((short)HIWORD(wParam)<0)
             {
-                timerSpeed+=10;
+                timerSpeed+=100;
             }
             else
             {
-                timerSpeed-=10;
+                timerSpeed-=100;
                 if (timerSpeed<0)
                 {
                     timerSpeed=1;
@@ -146,13 +115,15 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 
             hdcMem = CreateCompatibleDC(hdc);
             hbmMem = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
-            hOld = SelectObject(hdcMem, hbmMem);
+            //hOld = SelectObject(hdcMem, hbmMem);
+            for (int i=0;i<4;i++){
+                TL[i].SwitchTL(hdc,hBrush);
+            }
+            //FillRect(hdcMem, &rect,(HBRUSH)GetStockObject(WHITE_BRUSH));
 
-            FillRect(hdcMem, &rect,(HBRUSH)GetStockObject(WHITE_BRUSH));
+           // BitBlt(hdc, 0, 0, rect.right, rect.bottom, hdcMem, 0, 0, SRCCOPY);
 
-            BitBlt(hdc, 0, 0, rect.right, rect.bottom, hdcMem, 0, 0, SRCCOPY);
-
-            SelectObject(hdcMem,hOld);
+            //SelectObject(hdcMem,hOld);
             DeleteObject(hbmMem);
             DeleteDC(hdcMem);
 
