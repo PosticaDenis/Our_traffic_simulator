@@ -1,101 +1,187 @@
 #include "header.h"
 #include <windows.h>
-LRESULT CALLBACK WndProc (HWND, UINT, WPARAM, LPARAM);
- //static traffic_lights *traffic_lights[4];
- double a[4]={200,100,20,100};
- double b[4]={200,20,100,100};
- POINT coord[4];
- static bool tl1[4]={true,false,false,true};
 
- VOID CALLBACK TimerProc(HWND, UINT, UINT, DWORD );
+LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
 
- int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
- PSTR szCmdLine, int iCmdShow)
- {
- static char szAppName[] = "Beeper2";
- HWND hwnd;
- MSG msg;
- WNDCLASSEX wndclass;
- wndclass.cbSize = sizeof(wndclass);
- wndclass.style = CS_HREDRAW | CS_VREDRAW;
- wndclass.lpfnWndProc = WndProc;
- wndclass.cbClsExtra = 0;
- wndclass.cbWndExtra = 0;
- wndclass.hInstance = hInstance;
- wndclass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
- wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
- wndclass.hbrBackground =(HBRUSH) GetStockObject(WHITE_BRUSH);
- wndclass.lpszMenuName = NULL;
- wndclass.lpszClassName = szAppName;
- wndclass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
- RegisterClassEx(&wndclass);
- hwnd = CreateWindow(szAppName, "Beeper2 Timer Demo",
- WS_OVERLAPPEDWINDOW,
- CW_USEDEFAULT, CW_USEDEFAULT,
- CW_USEDEFAULT, CW_USEDEFAULT,
- NULL, NULL, hInstance, NULL);
- while(!SetTimer(hwnd, ID_TIMER, 1000,(TIMERPROC) TimerProc))
- if(IDCANCEL == MessageBox(hwnd,
- "Too many clocks or timers!", szAppName,
- MB_ICONEXCLAMATION | MB_RETRYCANCEL))
- return FALSE;
- ShowWindow(hwnd, iCmdShow);
- UpdateWindow(hwnd);
- while(GetMessage(&msg, NULL, 0, 0))
- {
- TranslateMessage(&msg);
- DispatchMessage(&msg);
- }
- return msg.wParam;
- }
+char szClassName[ ] = "WindowsApp";
 
-LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
- {
- //POINT coord[4];
- static HDC hdc;//hdcMem;
-static RECT rect;
- switch(iMsg)
- {
- case WM_DESTROY :
- KillTimer(hwnd, ID_TIMER);
- PostQuitMessage(0);
- return 0;
- }
- return DefWindowProc(hwnd, iMsg, wParam, lParam);
- }
-VOID CALLBACK TimerProc(HWND hwnd, UINT iMsg, UINT iTimerID, DWORD dwTime)
- {
-     POINT coord;
-     coord.x=10;
-     coord.y=10;
-     static bool b=true;
- static HDC hdc,hdcMem;
- HBRUSH hBrush;
- //PAINTSTRUCT ps;
- //static RECT rect;
-     //for (int i=0;i<4;i++)
-     //{
+int WINAPI WinMain (HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszArgument, int nCmdShow)
+{
+    HWND hwnd;
+    MSG messages;
+    WNDCLASSEX wincl;
 
-          //for (int i=0;i<4;i++)
-             //{
-             //hdcMem = CreateCompatibleDC(hdc);
-                 //coord[0].x=a[0];
-                 //coord[0].y=b[0];
-                 //traffic_lights[0]->setTL(coord[0],tl1[0]);
-                 //traffic_lights[0]->CreateTL(traffic_lights[0],hdcMem,tl1[0],coord[0]);
-         //tl1[0]=!tl1[0];
-         //traffic_lights[0]->SwitchTL(traffic_lights[0],tl1[0]);
-     //}
+    wincl.hInstance = hThisInstance;
+    wincl.lpszClassName = szClassName;
+    wincl.lpfnWndProc = WindowProcedure;
+    wincl.style = CS_DBLCLKS;
+    wincl.cbSize = sizeof (WNDCLASSEX);
 
+    wincl.hIcon = LoadIcon (NULL, IDI_APPLICATION);
+    wincl.hIconSm = LoadIcon (NULL, IDI_APPLICATION);
+    wincl.hCursor = LoadCursor (NULL, IDC_ARROW);
+    wincl.lpszMenuName = NULL;
+    wincl.cbClsExtra = 0;
+    wincl.cbWndExtra = 0;
 
-    hBrush = CreateSolidBrush(RGB(0,0,255));
-    SelectObject(hdc, hBrush);
-    Rectangle(hdc, 25, 25, 45, 45 );
-        //SelectObject(hdc, GetStockObject(WHITE_BRUSH));
-        DeleteObject(hBrush);
- traffic_lights tl;
-tl.setTL(coord,b);
-tl.CreateTL(hdcMem,b,coord);
-b=!b;
-tl.SwitchTL(b);
- }
+    wincl.hbrBackground =NULL;
+COLORREF clr;
+    if (!RegisterClassEx (&wincl))
+        return 0;
+
+    hwnd = CreateWindowEx (
+           0,
+           szClassName,
+           "CrazyBubbles",
+           WS_OVERLAPPEDWINDOW|WS_CLIPCHILDREN,
+           CW_USEDEFAULT,
+           CW_USEDEFAULT,
+           800,
+           600,
+           HWND_DESKTOP,
+           NULL,
+           hThisInstance,
+           NULL
+           );
+
+    ShowWindow (hwnd, nCmdShow);
+
+    while (GetMessage (&messages, NULL, 0, 0))
+    {
+        TranslateMessage(&messages);
+        DispatchMessage(&messages);
+    }
+
+    return messages.wParam;
+}
+
+LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    int cnt;
+    static HDC hdc,hdcMem;
+    static PAINTSTRUCT ps;
+    static RECT rect;
+    static HBRUSH hBrush;
+    static HBITMAP hbmMem;
+
+    static HANDLE hOld;
+
+    static int timerSpeed = 1,nrObj = 0;
+    static RECT area = {0, 0, 800, 600};
+
+    switch (message)
+    {
+        case WM_CREATE:
+        {
+          hdc = GetDC(hwnd);
+          GetClientRect(hwnd,&rect);
+
+          SetTimer(hwnd, ID_TIMER, timerSpeed, NULL);
+        break;
+        }
+
+        case WM_SIZE:
+        {
+            hdc = GetDC(hwnd);
+            GetClientRect(hwnd, &rect);
+        break;
+        }
+
+        case WM_LBUTTONDOWN:
+        {
+            POINT coord;
+            coord.x = LOWORD(lParam);
+            coord.y = HIWORD(lParam);
+            cnt=0;
+            if (nrObj>0)
+            {
+                for(int i = 0; i<nrObj; i++)
+                {
+                    if(abs(coord.x-objs[i]->center.x)<52)
+                    {
+                        cnt+=1;
+                    }
+                }
+                if(cnt==0)
+                {
+                    objs[nrObj] = new Circle(coord,2 + coord.x%5);
+                    objs[nrObj] -> Color(RGB(coord.x%200, coord.x%150+coord.y%100, coord.y%200));
+
+                    nrObj++;
+                }
+            }
+            else
+            {
+                objs[nrObj] = new Circle(coord,2 + coord.x%5);
+                objs[nrObj] -> Color(RGB(coord.x%200, coord.x%150+coord.y%100, coord.y%200));
+
+                nrObj++;
+            }
+        break;
+        }
+
+        case WM_MOUSEWHEEL:
+        {
+            if((short)HIWORD(wParam)<0)
+            {
+                timerSpeed+=10;
+            }
+            else
+            {
+                timerSpeed-=10;
+                if (timerSpeed<0)
+                {
+                    timerSpeed=1;
+                }
+            }
+            KillTimer(hwnd,ID_TIMER);
+            SetTimer(hwnd,ID_TIMER,timerSpeed,NULL);
+        break;
+        }
+
+        case WM_PAINT:
+        {
+            hdc = BeginPaint(hwnd,&ps);
+            GetClientRect(hwnd,&rect);
+
+            hdcMem = CreateCompatibleDC(hdc);
+            hbmMem = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
+            hOld = SelectObject(hdcMem, hbmMem);
+
+            FillRect(hdcMem, &rect,(HBRUSH)GetStockObject(WHITE_BRUSH));
+
+            BitBlt(hdc, 0, 0, rect.right, rect.bottom, hdcMem, 0, 0, SRCCOPY);
+
+            SelectObject(hdcMem,hOld);
+            DeleteObject(hbmMem);
+            DeleteDC(hdcMem);
+
+            EndPaint(hwnd,&ps);
+
+        break;
+        }
+
+        case WM_ERASEBKGND:
+            return 1;
+        break;
+
+        case WM_TIMER:
+        {
+            InvalidateRect(hwnd,NULL,FALSE);
+        break;
+        }
+
+        case WM_DESTROY:
+        {
+            KillTimer(hwnd,ID_TIMER);
+
+            PostQuitMessage (0);
+        break;
+        }
+
+        default:
+            return DefWindowProc (hwnd, message, wParam, lParam);
+    }
+    return 0;
+}
+

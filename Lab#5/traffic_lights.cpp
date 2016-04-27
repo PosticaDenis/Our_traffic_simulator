@@ -3,34 +3,23 @@ void traffic_lights::setTL(POINT position,bool tls )
 {
     this->position=position;
     this->tls=tls;
-    clr=RGB(255,0,0);
 }
-bool traffic_lights::Color(const COLORREF &clr)
+bool traffic_lights::SwitchTL(const HDC &hdc,HBRUSH &hBrush)
 {
-    this -> clr = clr;
-    return TRUE;
-}
-bool traffic_lights::CreateTL(const HDC &hdc,bool tls,POINT position)
-{
+    this->tls=!this->tls;
+    if (tls==true)
+    {
+        hBrush = CreateSolidBrush( RGB(0,255,0) );
+        SelectObject(hdc, hBrush);
+    }
+    else
+    {
+        hBrush = CreateSolidBrush( RGB(255,0,0) );
+        SelectObject(hdc, hBrush);
+    }
     Ellipse(hdc, position.x-10, position.y-10, position.x+10, position.y+10 );
-    if (tls==true)
-    {
-        Color(RGB(0,255,0));
-    }
-    else
-    {
-        Color(RGB(255,2,0));
-    }
-}
-bool traffic_lights::SwitchTL(bool tls)
-{
-    if (tls==true)
-    {
-        Color(RGB(0,255,0));
-    }
-    else
-    {
-        Color(RGB(255,0,0));
-    }
+    SelectObject(hdc, GetStockObject(WHITE_BRUSH));
+    DeleteObject(hBrush);
+    return TRUE;
 }
 
