@@ -1,0 +1,15 @@
+# depslib dependency file v1.0
+1461786433 source:e:\denis\wp\our_traffic_simulator\lab#5\main.cpp
+	"header.h"
+	<windows.h>
+
+1461786979 e:\denis\wp\our_traffic_simulator\lab#5\header.h
+	<windows.h>
+
+1461771065 source:e:\denis\wp\our_traffic_simulator\lab#5\res.rc
+	<wingdi.h>
+	"header.h"
+
+1461787001 source:e:\denis\wp\our_traffic_simulator\lab#5\traffic_lights.cpp
+	"header.h"
+
