@@ -37,7 +37,7 @@ int WINAPI WinMain (HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpsz
            CW_USEDEFAULT,
            CW_USEDEFAULT,
            800,
-           600,
+           800,
            HWND_DESKTOP,
            NULL,
            hThisInstance,
@@ -45,7 +45,7 @@ int WINAPI WinMain (HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpsz
            );
 
     ShowWindow (hwnd, nCmdShow);
-    //UpdateWindow(hwnd);
+    UpdateWindow(hwnd);
     while (GetMessage (&messages, NULL, 0, 0))
     {
         TranslateMessage(&messages);
@@ -65,12 +65,12 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 
     static HANDLE hOld;
 
-    static int timerSpeed = 1000;
+    static int timerSpeed = 3000;
 
     POINT coord;
     static traffic_lights TL[4];
-    double a[4]={40,140,40,140};
-    double b[4]={40,40,140,140};
+    double a[4]={200,600,200,600};
+    double b[4]={200,200,600,600};
     static bool tl[4]={TRUE,FALSE,FALSE,TRUE};
     switch (message)
     {
@@ -115,15 +115,15 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 
             hdcMem = CreateCompatibleDC(hdc);
             hbmMem = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
-            //hOld = SelectObject(hdcMem, hbmMem);
+            hOld = SelectObject(hdcMem, hbmMem);
+
+            FillRect(hdcMem, &rect,(HBRUSH)GetStockObject(WHITE_BRUSH));
+            BitBlt(hdc, 0, 0, rect.right, rect.bottom, hdcMem, 0, 0, SRCCOPY);
+            SelectObject(hdcMem,hOld);
+
             for (int i=0;i<4;i++){
                 TL[i].SwitchTL(hdc,hBrush);
             }
-            //FillRect(hdcMem, &rect,(HBRUSH)GetStockObject(WHITE_BRUSH));
-
-           // BitBlt(hdc, 0, 0, rect.right, rect.bottom, hdcMem, 0, 0, SRCCOPY);
-
-            //SelectObject(hdcMem,hOld);
             DeleteObject(hbmMem);
             DeleteDC(hdcMem);
 
@@ -132,12 +132,13 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
         break;
         }
 
-        case WM_ERASEBKGND:
-            return 1;
-        break;
-
         case WM_TIMER:
         {
+           // hdc=GetDC(hwnd);
+           // for (int i=0;i<4;i++){
+             //   TL[i].SwitchTL(hdc,hBrush);
+           // }
+            //ReleaseDC(hwnd, hdc);
             InvalidateRect(hwnd,NULL,FALSE);
         break;
         }

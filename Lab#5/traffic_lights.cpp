@@ -17,7 +17,7 @@ bool traffic_lights::SwitchTL(const HDC &hdc,HBRUSH &hBrush)
         hBrush = CreateSolidBrush( RGB(255,0,0) );
         SelectObject(hdc, hBrush);
     }
-    Ellipse(hdc, position.x-10, position.y-10, position.x+10, position.y+10 );
+    Ellipse(hdc, position.x-40, position.y-40, position.x+40, position.y+40 );
     SelectObject(hdc, GetStockObject(WHITE_BRUSH));
     DeleteObject(hBrush);
     return TRUE;
