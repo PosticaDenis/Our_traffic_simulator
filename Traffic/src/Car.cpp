@@ -90,8 +90,9 @@ bool Car::Move(const HDC &hdc,const RECT& rect,HBRUSH &hBrush) {
 
     }
 
+    if (xSpeed > 0){
     LoadAndBlitBitmap(TEXT("images/car.bmp"), hdc, center.x-25, center.y-25);
-
+    }
 
     //Rectangle(hdc,center.x-25,center.y-25,center.x+25,center.y+25);
     SelectObject(hdc,GetStockObject(WHITE_BRUSH));
