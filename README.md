@@ -2,7 +2,7 @@ The repository contains the work of our team on creating a traffic simulator.
 
 # Project participants
 * Botnari Nicolae - GUI and simulation of cars (generating and selection of random dirrections)
-* Postica Denis - 
+* Postica Denis - simulation of traffic light, synchronization between cars and traffic lights.
 
 #What we have implemented 
 * Simulataion of a traffic light for an intersection with 4 traffic lights;
