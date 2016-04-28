@@ -127,7 +127,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                     }
             }
             if (cnt==0){
-                newobj.x = 100;
+                newobj.x = 50;
                 newobj.y = (rcClient.bottom - rcClient.top)/2+75;
 
                 car[nrobjects]=new Car(newobj,5+newobj.x%5);
@@ -171,10 +171,18 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
             case ID_TIMER:
             for(int i = 0; i < nrobjects; i++)
             {
-                rectangle.bottom=car[i]->center.y+25;
-                rectangle.left=car[i]->center.x-25;
-                rectangle.top=car[i]->center.y-25;
-                rectangle.right=car[i]->center.x+25;
+                if(car[i]->right==0){
+                rectangle.bottom=car[i]->center.y+50;
+                rectangle.left=car[i]->center.x-50;
+                rectangle.top=car[i]->center.y-50;
+                rectangle.right=car[i]->center.x+50;
+                }
+                else{
+                rectangle.bottom=car[i]->center.y+50;
+                rectangle.left=car[i]->center.x-50;
+                rectangle.top=car[i]->center.y-50;
+                rectangle.right=car[i]->center.x+50;
+                }
                 car[i]->Move(hdc, rect, hBrush);
                 InvalidateRect(hwnd,&rectangle,true);
                 for(int i = 0; i<nrobjects-1; i++)
@@ -184,7 +192,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                         car[i]->Coll(*car[j]);
                     }
                 }
-                if ((car[i]->center.x<TL[2].position.x+10) && (car[i]->center.x>TL[2].position.x-10) && (TL[2].tls==false)){
+                if ((car[i]->center.x<TL[2].position.x-20) && (car[i]->center.x>TL[2].position.x-120) && (TL[2].tls==false)){
                     car[i]->SetSemafor(false);
                 }
                 else{
