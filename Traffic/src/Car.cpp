@@ -113,7 +113,7 @@ bool Car::Collision(const RECT &rect) {
     return TRUE;
 }
 bool Car::Coll(Car &c2){
-    if((semafor==false) && (c2.center.x>center.x-130)){
+    if((semafor==false) && (c2.center.x>center.x-95)){
         c2.SetSemafor(false);
     }
  return TRUE;

@@ -82,7 +82,7 @@ int WINAPI WinMain (HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpsz
     hwnd = CreateWindowEx (
            0,
            szClassName,
-           "CrazyBubbles",
+           "CrazyTraffic",
            WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
            CW_USEDEFAULT,
            CW_USEDEFAULT,
@@ -171,7 +171,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
             int cnt=0;
             GetClientRect(hwnd, &rcClient);
             for (int i=0;i<nrobjects;i++){
-                    if(car[i]->center.x<200){
+                    if(car[i]->center.x<150){
                         cnt=1;
                     }
             }
@@ -228,18 +228,20 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                 rectangle.right=car[i]->center.x-20;
                 }
                 if((car[i]->right==0) && (car[i]->center.x-26>(rect.right-1)/2)){
-                rectangle.bottom=car[i]->center.y+75;
+                rectangle.bottom=car[i]->center.y+50;
                 rectangle.left=car[i]->center.x-77;
-                rectangle.top=car[i]->center.y+60;
+                rectangle.top=car[i]->center.y+35;
                 rectangle.right=car[i]->center.x+33;
                 }
                 if((car[i]->right==1) && (car[i]->center.x+56>(rect.right-1)/2)){
                 rectangle.bottom=car[i]->center.y-15;
                 rectangle.left=car[i]->center.x-33;
                 rectangle.top=car[i]->center.y-20;
-                rectangle.right=car[i]->center.x+73;
+                rectangle.right=car[i]->center.x+33;
                 }
+
                 car[i]->Move(hdc, rect, hBrush);
+
                 InvalidateRect(hwnd,&rectangle,true);
                 for(int i = 0; i<nrobjects-1; i++)
                 {
@@ -248,7 +250,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                         car[i]->Coll(*car[j]);
                     }
                 }
-                if ((car[i]->center.x<TL[2].position.x-20) && (car[i]->center.x>TL[2].position.x-120) && (TL[2].tls==false)){
+                if ((car[i]->center.x<TL[2].position.x-20) && (car[i]->center.x>TL[2].position.x-90) && (TL[2].tls==false)){
                     car[i]->SetSemafor(false);
                 }
                 else{
