@@ -37,8 +37,8 @@ int WINAPI WinMain (HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpsz
            WS_OVERLAPPEDWINDOW|WS_CLIPCHILDREN,
            CW_USEDEFAULT,
            CW_USEDEFAULT,
-           800,
-           800,
+           1150,
+           682,
            HWND_DESKTOP,
            NULL,
            hThisInstance,
@@ -62,9 +62,9 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
     static PAINTSTRUCT ps;
     static RECT rect;
     static HBRUSH hBrush;
-    static HBITMAP hbmMem;
+    static HBITMAP hbmMem,hBitmap01;
 
-    static HANDLE hOld;
+    static HANDLE oldBitmap;
 
     static int timerSpeed = 3000;
 
@@ -77,8 +77,8 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
     static int tspeed=30,nrobjects=0;
     POINT coord;
     static traffic_lights TL[4];
-    double a[4]={200,600,200,600};
-    double b[4]={200,200,600,600};
+    double a[4]={400,700,400,700};
+    double b[4]={200,200,500,500};
     static bool tl[4]={TRUE,FALSE,FALSE,TRUE};
     switch (message)
     {
@@ -132,18 +132,19 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 
         case WM_PAINT:
         {
+            hBitmap01 = (HBITMAP)LoadImage(NULL, "map.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
             hdc = BeginPaint(hwnd,&ps);
-            GetClientRect(hwnd,&rect);
+            //GetClientRect(hwnd,&rect);
 
             hdcMem = CreateCompatibleDC(hdc);
-            hbmMem = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
-            hOld = SelectObject(hdcMem, hbmMem);
+            //hbmMem = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
+            oldBitmap = SelectObject(hdcMem, hBitmap01);
 
-            FillRect(hdcMem, &rect,(HBRUSH)GetStockObject(WHITE_BRUSH));
-
-            BitBlt(hdc, 0, 0, rect.right, rect.bottom, hdcMem, 0, 0, SRCCOPY);
-            SelectObject(hdcMem,hOld);
-            DeleteObject(hbmMem);
+            //FillRect(hdcMem, &rect,(HBRUSH)GetStockObject(WHITE_BRUSH));
+            GetObject(hBitmap01, sizeof(bitmap), &bitmap);
+            BitBlt(hdc, 0, 0, bitmap.bmWidth, bitmap.bmHeight, hdcMem, 0, 0, SRCCOPY);
+            SelectObject(hdcMem,oldBitmap);
+            //DeleteObject(hbmMem);
             DeleteDC(hdcMem);
 
             EndPaint(hwnd,&ps);
