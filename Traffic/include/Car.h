@@ -21,7 +21,7 @@ class Car
     public:
     POINT center;
     int xSpeed,ySpeed;
-    bool semafor=false;
+    bool semafor=true;
     int right;
 
     Car(POINT center,const int &speed);
@@ -29,6 +29,7 @@ class Car
     bool Collision(const RECT &rect);
     bool Move(const HDC &hdc,const RECT& rect,HBRUSH &hBrush);
     void SetSemafor(bool sem);
+    bool Coll(Car &c2);
 };
 
 #endif // CAR_H
