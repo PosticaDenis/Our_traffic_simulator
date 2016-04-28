@@ -3,7 +3,7 @@
 #include <windows.h>
 
 LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
-
+static traffic_lights TL[4];
 char szClassName[ ] = "WindowsApp";
 static Car *car[50];
 
@@ -66,7 +66,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 
     static HANDLE oldBitmap;
 
-    static int timerSpeed = 3000;
+    static int timerSpeed = 5000;
 
      RECT   rcClient;
     static BITMAP bitmap;
@@ -76,10 +76,9 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 
     static int tspeed=30,nrobjects=0;
     POINT coord;
-    static traffic_lights TL[4];
     double a[4]={400,700,400,700};
     double b[4]={200,200,500,500};
-    static bool tl[4]={TRUE,FALSE,FALSE,TRUE};
+    static bool tl[4]={FALSE,TRUE,TRUE,FALSE};
     switch (message)
     {
         case WM_CREATE:
@@ -118,33 +117,38 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
         }
 
         case WM_LBUTTONDOWN:
-
+            if (nrobjects<50){
             POINT newobj;
-
+            int cnt=0;
             GetClientRect(hwnd, &rcClient);
-			newobj.x = 100;
-			newobj.y = (rcClient.bottom - rcClient.top)/2;
+            for (int i=0;i<nrobjects;i++){
+                    if(car[i]->center.x<200){
+                        cnt=1;
+                    }
+            }
+            if (cnt==0){
+                newobj.x = 100;
+                newobj.y = (rcClient.bottom - rcClient.top)/2+75;
 
-            car[nrobjects]=new Car(newobj,5+newobj.x%5);
+                car[nrobjects]=new Car(newobj,5+newobj.x%5);
 
-            nrobjects++;
+                nrobjects++;
+            }
+            }
             break;
 
         case WM_PAINT:
         {
             hBitmap01 = (HBITMAP)LoadImage(NULL, "map.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
             hdc = BeginPaint(hwnd,&ps);
-            //GetClientRect(hwnd,&rect);
 
             hdcMem = CreateCompatibleDC(hdc);
-            //hbmMem = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
             oldBitmap = SelectObject(hdcMem, hBitmap01);
 
-            //FillRect(hdcMem, &rect,(HBRUSH)GetStockObject(WHITE_BRUSH));
             GetObject(hBitmap01, sizeof(bitmap), &bitmap);
             BitBlt(hdc, 0, 0, bitmap.bmWidth, bitmap.bmHeight, hdcMem, 0, 0, SRCCOPY);
             SelectObject(hdcMem,oldBitmap);
-            //DeleteObject(hbmMem);
+
             DeleteDC(hdcMem);
 
             EndPaint(hwnd,&ps);
@@ -167,14 +171,26 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
             case ID_TIMER:
             for(int i = 0; i < nrobjects; i++)
             {
-                rectangle.bottom=car[i]->center.y+15;
-                rectangle.left=car[i]->center.x-15;
-                rectangle.top=car[i]->center.y-15;
-                rectangle.right=car[i]->center.x+15;
-                InvalidateRect(hwnd,&rectangle,true);
+                rectangle.bottom=car[i]->center.y+25;
+                rectangle.left=car[i]->center.x-25;
+                rectangle.top=car[i]->center.y-25;
+                rectangle.right=car[i]->center.x+25;
                 car[i]->Move(hdc, rect, hBrush);
+                InvalidateRect(hwnd,&rectangle,true);
+                for(int i = 0; i<nrobjects-1; i++)
+                {
+                    for(int j = i+1; j < nrobjects; j++)
+                    {
+                        car[i]->Coll(*car[j]);
+                    }
+                }
+                if ((car[i]->center.x<TL[2].position.x+10) && (car[i]->center.x>TL[2].position.x-10) && (TL[2].tls==false)){
+                    car[i]->SetSemafor(false);
+                }
+                else{
+                    car[i]->SetSemafor(true);
+                }
             }
-
                 return 0;
             }
             ReleaseDC(hwnd, hdc);

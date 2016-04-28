@@ -1,6 +1,5 @@
 #include "Car.h"
 
-
 Car::Car(POINT center,const int &speed) {
     const char arr[3] = {0, 1, 2};
     right = arr[rand()%3];
@@ -20,9 +19,8 @@ bool Car::Move(const HDC &hdc,const RECT& rect,HBRUSH &hBrush) {
     hBrush=CreateSolidBrush(clr);
     SelectObject(hdc,hBrush);
     Collision(rect);
-
-    if (semafor==true){
-        center.x=0;
+    if (semafor==false){
+        center.x=center.x;
     } else {
         center.x+=xSpeed;
     }
@@ -39,7 +37,7 @@ bool Car::Move(const HDC &hdc,const RECT& rect,HBRUSH &hBrush) {
     }
 
 
-    Rectangle(hdc,center.x-15,center.y-15,center.x+15,center.y+15);
+    Rectangle(hdc,center.x-25,center.y-25,center.x+25,center.y+25);
     SelectObject(hdc,GetStockObject(WHITE_BRUSH));
     DeleteObject(hBrush);
     return TRUE;
@@ -54,11 +52,15 @@ void Car::SetSemafor(bool sem){
 
 bool Car::Collision(const RECT &rect) {
 
-    if(center.x+15>(rect.right-1)/2){
+    if(( (right==0) && (center.x-25>(rect.right-1)/2)) || ((right==1) && (center.x+55>(rect.right-1)/2) )){
       xSpeed=0;
-
     }
 
-
     return TRUE;
+}
+bool Car::Coll(Car &c2){
+    if((semafor==false) && (c2.center.x>center.x-80)){
+        c2.SetSemafor(false);
+    }
+ return TRUE;
 }
