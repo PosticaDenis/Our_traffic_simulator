@@ -28,7 +28,6 @@
 			<Add library="kernel32" />
 			<Add library="comctl32" />
 		</Linker>
-		<Unit filename="grass.bmp" />
 		<Unit filename="header.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="traffic_lights.cpp" />
