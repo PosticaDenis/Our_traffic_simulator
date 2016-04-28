@@ -83,7 +83,7 @@ int WINAPI WinMain (HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpsz
            0,
            szClassName,
            "CrazyBubbles",
-           WS_OVERLAPPEDWINDOW|WS_CLIPCHILDREN,
+           WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
            CW_USEDEFAULT,
            CW_USEDEFAULT,
            1150,
@@ -177,7 +177,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
             }
             if (cnt==0){
                 newobj.x = 50;
-                newobj.y = (rcClient.bottom - rcClient.top)/2+70;
+                newobj.y = (rcClient.bottom - rcClient.top)/2+65;
 
                 car[nrobjects]=new Car(newobj,5+newobj.x%5);
 
@@ -229,15 +229,15 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                 }
                 if((car[i]->right==0) && (car[i]->center.x-26>(rect.right-1)/2)){
                 rectangle.bottom=car[i]->center.y+75;
-                rectangle.left=car[i]->center.x-33;
+                rectangle.left=car[i]->center.x-77;
                 rectangle.top=car[i]->center.y+60;
                 rectangle.right=car[i]->center.x+33;
                 }
                 if((car[i]->right==1) && (car[i]->center.x+56>(rect.right-1)/2)){
-                rectangle.bottom=car[i]->center.y-20;
+                rectangle.bottom=car[i]->center.y-15;
                 rectangle.left=car[i]->center.x-33;
-                rectangle.top=car[i]->center.y-25;
-                rectangle.right=car[i]->center.x+33;
+                rectangle.top=car[i]->center.y-20;
+                rectangle.right=car[i]->center.x+73;
                 }
                 car[i]->Move(hdc, rect, hBrush);
                 InvalidateRect(hwnd,&rectangle,true);
