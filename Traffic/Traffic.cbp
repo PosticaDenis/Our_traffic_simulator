@@ -42,7 +42,7 @@
 		<Unit filename="images/Car.bmp" />
 		<Unit filename="images/map.bmp" />
 		<Unit filename="include/Car.h" />
-		<Unit filename="main.cpp" />
+		<Unit filename="main1.cpp" />
 		<Unit filename="src/Car.cpp" />
 		<Extensions>
 			<code_completion />

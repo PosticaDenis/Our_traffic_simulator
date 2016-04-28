@@ -141,8 +141,8 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
             FillRect(hdcMem, &rect,(HBRUSH)GetStockObject(WHITE_BRUSH));
 
             //for(int i = 0; i < nrobjects; i++)
-            //{
-               // car[i]->Move(hdcMem, rect, hBrush);
+           // {
+            //   car[i]->Move(hdcMem, rect, hBrush);
            // }
 
             BitBlt(hdc, 0, 0, rect.right, rect.bottom, hdcMem, 0, 0, SRCCOPY);
@@ -160,10 +160,12 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
             return 1;
         break;
         case WM_TIMER:
+            hdcMem=GetDC(hwnd);
             for(int i = 0; i < nrobjects; i++)
-            {
+            //{
                 car[i]->Move(hdcMem, rect, hBrush);
-            }
+            //}
+            ReleaseDC(hwnd,hdcMem);
             //InvalidateRect(hwnd,NULL,FALSE);
             break;
         case WM_DESTROY:
