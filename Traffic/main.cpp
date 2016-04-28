@@ -221,28 +221,31 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
             case ID_TIMER:
             for(int i = 0; i < nrobjects; i++)
             {
-                if((car[i]->right==2) || (car[i]->center.x<550)){
+                if((car[i]->right==2) || (car[i]->center.x<550)&& (car[i]->semafor==true)){
                 rectangle.bottom=car[i]->center.y+33;
                 rectangle.left=car[i]->center.x-25;
                 rectangle.top=car[i]->center.y-33;
                 rectangle.right=car[i]->center.x-20;
+                InvalidateRect(hwnd,&rectangle,true);
                 }
-                if((car[i]->right==0) && (car[i]->center.x-26>(rect.right-1)/2)){
+                if((car[i]->right==0) && (car[i]->center.x-26>(rect.right-1)/2)&& (car[i]->semafor==true)){
                 rectangle.bottom=car[i]->center.y+50;
                 rectangle.left=car[i]->center.x-77;
                 rectangle.top=car[i]->center.y+35;
                 rectangle.right=car[i]->center.x+33;
+                InvalidateRect(hwnd,&rectangle,true);
                 }
-                if((car[i]->right==1) && (car[i]->center.x+56>(rect.right-1)/2)){
+                if((car[i]->right==1) && (car[i]->center.x+56>(rect.right-1)/2)&& (car[i]->semafor==true)){
                 rectangle.bottom=car[i]->center.y-15;
                 rectangle.left=car[i]->center.x-33;
                 rectangle.top=car[i]->center.y-20;
                 rectangle.right=car[i]->center.x+33;
+                InvalidateRect(hwnd,&rectangle,true);
                 }
 
                 car[i]->Move(hdc, rect, hBrush);
 
-                InvalidateRect(hwnd,&rectangle,true);
+
                 for(int i = 0; i<nrobjects-1; i++)
                 {
                     for(int j = i+1; j < nrobjects; j++)
