@@ -78,7 +78,6 @@ bool Car::Move(const HDC &hdc,const RECT& rect,HBRUSH &hBrush) {
         center.y+=-abs(ySpeed);
        LoadAndBlitBitmap(TEXT("images/CarUp.bmp"), hdc, center.x-25, center.y-25);
 
-
     } else if (xSpeed==0 && right==1){
         center.y+=abs(ySpeed);
         LoadAndBlitBitmap(TEXT("images/CarDown.bmp"), hdc, center.x-25, center.y-25);
@@ -90,7 +89,9 @@ bool Car::Move(const HDC &hdc,const RECT& rect,HBRUSH &hBrush) {
 
     }
 
+    if (xSpeed > 0){
     LoadAndBlitBitmap(TEXT("images/car.bmp"), hdc, center.x-25, center.y-25);
+    }
 
     SelectObject(hdc,GetStockObject(WHITE_BRUSH));
     DeleteObject(hBrush);

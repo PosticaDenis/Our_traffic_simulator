@@ -6,7 +6,56 @@ LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
 static traffic_lights TL[4];
 char szClassName[ ] = "WindowsApp";
 static Car *car[50];
+bool LoadAndBlitBitmaph(char* szFileName, HDC hWinDC,int x, int y)
+{
+	// Load the bitmap image file
+	HBITMAP hBitmap;
+	hBitmap = (HBITMAP)LoadImage(NULL, szFileName, IMAGE_BITMAP, 0, 0,LR_LOADFROMFILE);
+	// Verify that the image was loaded
+	if (hBitmap == NULL) {
+		::MessageBox(NULL, TEXT("LoadImage Failed"), TEXT("Error"), MB_OK);
+		return false;
+	}
 
+	// Create a device context that is compatible with the window
+	HDC hLocalDC;
+	hLocalDC = ::CreateCompatibleDC(hWinDC);
+	// Verify that the device context was created
+	if (hLocalDC == NULL) {
+		::MessageBox(NULL, TEXT("CreateCompatibleDC Failed"), TEXT("Error"), MB_OK);
+		return false;
+	}
+
+	// Get the bitmap's parameters and verify the get
+	BITMAP qBitmap;
+	int iReturn = GetObject(reinterpret_cast<HGDIOBJ>(hBitmap), sizeof(BITMAP),
+		reinterpret_cast<LPVOID>(&qBitmap));
+	if (!iReturn) {
+		::MessageBox(NULL, TEXT("GetObject Failed"), TEXT("Error"), MB_OK);
+		return false;
+	}
+
+	// Select the loaded bitmap into the device context
+	HBITMAP hOldBmp = (HBITMAP)::SelectObject(hLocalDC, hBitmap);
+	if (hOldBmp == NULL) {
+		::MessageBox(NULL, TEXT("SelectObject Failed"), TEXT("Error"), MB_OK);
+		return false;
+	}
+
+	// Blit the dc which holds the bitmap onto the window's dc
+	BOOL qRetBlit = ::BitBlt(hWinDC, x, y, qBitmap.bmWidth, qBitmap.bmHeight,
+		hLocalDC, 0, 0, SRCCOPY);
+	if (!qRetBlit) {
+		::MessageBox(NULL, TEXT("Blit Failed"), TEXT("Error"), MB_OK);
+		return false;
+	}
+
+	// Unitialize and deallocate resources
+	::SelectObject(hLocalDC, hOldBmp);
+	::DeleteDC(hLocalDC);
+	::DeleteObject(hBitmap);
+	return true;
+}
 int WINAPI WinMain (HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszArgument, int nCmdShow)
 {
     HWND hwnd;
@@ -128,7 +177,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
             }
             if (cnt==0){
                 newobj.x = 50;
-                newobj.y = (rcClient.bottom - rcClient.top)/2+75;
+                newobj.y = (rcClient.bottom - rcClient.top)/2+70;
 
                 car[nrobjects]=new Car(newobj,5+newobj.x%5);
 
@@ -139,8 +188,9 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 
         case WM_PAINT:
         {
-            hBitmap01 = (HBITMAP)LoadImage(NULL, "map.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-            hdc = BeginPaint(hwnd,&ps);
+             hdc = BeginPaint(hwnd,&ps);
+
+            LoadAndBlitBitmaph(TEXT("map.bmp"), hdc, 0,0);
 
             hdcMem = CreateCompatibleDC(hdc);
             oldBitmap = SelectObject(hdcMem, hBitmap01);
@@ -171,17 +221,23 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
             case ID_TIMER:
             for(int i = 0; i < nrobjects; i++)
             {
-                if(car[i]->right==0){
-                rectangle.bottom=car[i]->center.y+50;
-                rectangle.left=car[i]->center.x-50;
-                rectangle.top=car[i]->center.y-50;
-                rectangle.right=car[i]->center.x+50;
+                if((car[i]->right==2) || (car[i]->center.x<550)){
+                rectangle.bottom=car[i]->center.y+33;
+                rectangle.left=car[i]->center.x-25;
+                rectangle.top=car[i]->center.y-33;
+                rectangle.right=car[i]->center.x-20;
                 }
-                else{
-                rectangle.bottom=car[i]->center.y+50;
-                rectangle.left=car[i]->center.x-50;
-                rectangle.top=car[i]->center.y-50;
-                rectangle.right=car[i]->center.x+50;
+                if((car[i]->right==0) && (car[i]->center.x-26>(rect.right-1)/2)){
+                rectangle.bottom=car[i]->center.y+75;
+                rectangle.left=car[i]->center.x-33;
+                rectangle.top=car[i]->center.y+60;
+                rectangle.right=car[i]->center.x+33;
+                }
+                if((car[i]->right==1) && (car[i]->center.x+56>(rect.right-1)/2)){
+                rectangle.bottom=car[i]->center.y-20;
+                rectangle.left=car[i]->center.x-33;
+                rectangle.top=car[i]->center.y-25;
+                rectangle.right=car[i]->center.x+33;
                 }
                 car[i]->Move(hdc, rect, hBrush);
                 InvalidateRect(hwnd,&rectangle,true);
