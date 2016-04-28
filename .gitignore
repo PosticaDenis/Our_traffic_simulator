@@ -22,6 +22,10 @@
 *.a
 *.lib
 
+# CodeBlocks artefacts
+*.depend
+*.layout
+
 # Executables
 *.exe
 *.out
