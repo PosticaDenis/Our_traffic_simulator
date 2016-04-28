@@ -39,17 +39,12 @@
 			<Add library="kernel32" />
 			<Add library="comctl32" />
 		</Linker>
-<<<<<<< HEAD:Traffic/Traffic.cbp
-		<Unit filename="images/Car.bmp" />
+		<Unit filename="header.h" />
 		<Unit filename="images/map.bmp" />
 		<Unit filename="include/Car.h" />
-		<Unit filename="main1.cpp" />
-		<Unit filename="src/Car.cpp" />
-=======
-		<Unit filename="header.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/Car.cpp" />
 		<Unit filename="traffic_lights.cpp" />
->>>>>>> Postica_Denis:Lab#5/Lab#5.cbp
 		<Extensions>
 			<code_completion />
 			<envvars />
