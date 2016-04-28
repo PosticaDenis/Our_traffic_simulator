@@ -93,11 +93,7 @@ bool Car::Move(const HDC &hdc,const RECT& rect,HBRUSH &hBrush) {
     LoadAndBlitBitmap(TEXT("images/car.bmp"), hdc, center.x-25, center.y-25);
 
 
-<<<<<<< HEAD
     //Rectangle(hdc,center.x-25,center.y-25,center.x+25,center.y+25);
-=======
-    Rectangle(hdc,center.x-25,center.y-25,center.x+25,center.y+25);
->>>>>>> 56fc532f1c28ad9a27a1bd628b941ed4b0951ca3
     SelectObject(hdc,GetStockObject(WHITE_BRUSH));
     DeleteObject(hBrush);
     return TRUE;
